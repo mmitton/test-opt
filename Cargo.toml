@@ -1,0 +1,14 @@
+[package]
+name = "test-opt"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cranelift = { path = "../git_clone/wasmtime/cranelift/umbrella" }
+cranelift-codegen = { path = "../git_clone/wasmtime/cranelift/codegen", features = ["trace-log", "disas"] }
+cranelift-jit = { path = "../git_clone/wasmtime/cranelift/jit" }
+cranelift-module = { path = "../git_clone/wasmtime/cranelift/module" }
+cranelift-native = { path = "../git_clone/wasmtime/cranelift/native" }
+simple_logger = "*"
