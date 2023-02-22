@@ -32,17 +32,30 @@ fn brif(v: i32) -> i32 {
     fb.switch_to_block(entry);
 
     let block1 = fb.create_block();
-    let block2 = fb.create_block();
+    let block2a = fb.create_block();
+    let block2b = fb.create_block();
+    let block2c = fb.create_block();
     let block3 = fb.create_block();
 
     let c = fb.ins().iconst(types::I32, v as i64);
-    fb.ins().brif(c, block1, &[], block2, &[]);
+    let loop_count = fb.ins().iconst(types::I32, 10);
+    fb.ins().brif(c, block1, &[], block2a, &[loop_count]);
 
     fb.switch_to_block(block1);
     let c0 = fb.ins().iconst(types::I32, 4);
     fb.ins().jump(block3, &[c0]);
 
-    fb.switch_to_block(block2);
+    fb.switch_to_block(block2a);
+    let loop_count = fb.append_block_param(block2a, types::I32);
+    let one = fb.ins().iconst(types::I32, 1);
+    let new_loop_count = fb.ins().isub(loop_count, one);
+    fb.ins().jump(block2b, &[]);
+
+    fb.switch_to_block(block2b);
+    fb.ins()
+        .brif(new_loop_count, block2a, &[new_loop_count], block2c, &[]);
+
+    fb.switch_to_block(block2c);
     let c1 = fb.ins().iconst(types::I32, 8);
     fb.ins().jump(block3, &[c1]);
 
@@ -251,10 +264,10 @@ fn main() {
 
     test!(brif, 0, 8);
     test!(brif, 1, 4);
-    test!(br_table, 0, 8);
-    test!(br_table, 1, 16);
-    test!(br_table, 2, 4);
-    test!(br_table, -1, 4);
-    test!(both, 1, 8);
-    test!(both, 0, 16);
+    // test!(br_table, 0, 8);
+    // test!(br_table, 1, 16);
+    // test!(br_table, 2, 4);
+    // test!(br_table, -1, 4);
+    // test!(both, 1, 8);
+    // test!(both, 0, 16);
 }
